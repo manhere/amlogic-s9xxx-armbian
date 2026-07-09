@@ -1,12 +1,9 @@
-serverAddr = "47.92.237.29"
+serverAddr = "127.0.0.1"
 serverPort = 7000
-auth.method = "token"
-auth.token = "WeVV4bezpLVXsIH4"
 
-[[visitors]]
-name = "mzy_shh_bt_visitor2"
-type = "stcp"
-serverName = "web-mzy"
-secretKey = "dm@q1w2~e3r4~mzy"
-bindAddr = "127.0.0.1"
-bindPort = 6008
+[[proxies]]
+name = "test-tcp"
+type = "tcp"
+localIP = "127.0.0.1"
+localPort = 22
+remotePort = 6000
