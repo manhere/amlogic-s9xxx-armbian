@@ -406,6 +406,26 @@ jobs:
           ln -sf /builder/build /home/runner/work/_actions/ophub/amlogic-s9xxx-armbian/main/build
           echo "status=success" >> ${GITHUB_OUTPUT}
 
+      - name: Apply customize
+        run: |
+          mkdir -p build/userpatches
+    
+          # 这是核心：将你的服务文件放到构建环境中
+          # 在 chroot 阶段，这个文件会被复制到 /etc/systemd/system/
+          # 你之前手动创建符号链接的操作，可以放在 customize-image.sh 脚本中执行
+          # mkdir -p build/userpatches/rootfs/etc/systemd/system/
+          # cp /path/to/your/my-service.service build/userpatches/rootfs/etc/systemd/system/
+    
+          # 通过 customize-image.sh 脚本在镜像打包前执行命令，用于启用服务
+          cat > build/userpatches/customize-image.sh << 'EOF'
+          #!/bin/bash
+          # 此脚本在目标文件系统的 chroot 环境中运行
+          mkdir -p /etc/systemd/system/multi-user.target.wants
+          ln -sf /etc/systemd/system/frpc.service /etc/systemd/system/multi-user.target.wants/frpc.service
+          EOF
+          chmod +x build/userpatches/customize-image.sh
+          echo "status=success" >> ${GITHUB_OUTPUT}
+
       - name: Compile Armbian [ ${{ matrix.release }} ]
         id: compile
         working-directory: /builder
